@@ -1,12 +1,12 @@
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.ConfigurationException;
-import ca.uhn.fhir.jpa.config.BaseJavaConfigR4;
 import ca.uhn.fhir.jpa.config.BaseJavaConfigR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -44,12 +44,13 @@ public class FhirServerConfigR5 extends BaseJavaConfigR5 {
             throw new ConfigurationException("Could not set the data source due to a configuration issue", e);
         }
 
-        retVal.setJpaProperties(HapiProperties.getProperties());
+        retVal.setJpaProperties(HapiProperties.getJpaProperties());
         return retVal;
     }
 
-    @Bean()
-    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+  @Bean
+  @Primary
+  public JpaTransactionManager hapiTransactionManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager retVal = new JpaTransactionManager();
         retVal.setEntityManagerFactory(entityManagerFactory);
         return retVal;
